@@ -1,6 +1,6 @@
 import { clearAuthTokens, getAuthToken, getRefreshToken, setAuthTokens } from "@/lib/auth-token";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+const API_BASE_URL = "";
 
 export class ApiError extends Error {
   constructor(
@@ -95,8 +95,8 @@ export async function apiClient<T>(path: string, options: RequestOptions = {}): 
       headers,
       credentials: "include",
     });
-  } catch {
-    throw new ApiError("Network request failed");
+  } catch (error) {
+    throw new ApiError("Network request failed", undefined, error instanceof Error ? error.message : String(error));
   }
 
   if (response.status === 401 && shouldTryRefresh(path, { ...requestOptions, skipAuthRefresh })) {
@@ -110,8 +110,8 @@ export async function apiClient<T>(path: string, options: RequestOptions = {}): 
         headers: retryHeaders,
         credentials: "include",
       });
-    } catch {
-      throw new ApiError("Network request failed");
+    } catch (error) {
+      throw new ApiError("Network request failed", undefined, error instanceof Error ? error.message : String(error));
     }
   }
 

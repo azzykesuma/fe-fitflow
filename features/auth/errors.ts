@@ -7,7 +7,7 @@ function isDebugAuthErrorsEnabled() {
 function formatDebugDetails(error: ApiError) {
   const details = typeof error.details === "string" ? error.details : JSON.stringify(error.details, null, 2);
 
-  return details ? `Auth request failed (${error.status ?? "network"}): ${details}` : `Auth request failed (${error.status ?? "network"})`;
+  return details ? `Auth request failed (${error.status ?? "network/CORS"}): ${details}` : `Auth request failed (${error.status ?? "network/CORS"})`;
 }
 
 export function getSafeAuthErrorMessage(error: unknown, fallback: string) {
