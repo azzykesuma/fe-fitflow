@@ -6,6 +6,7 @@ export class ApiError extends Error {
   constructor(
     message: string,
     readonly status?: number,
+    readonly details?: unknown,
   ) {
     super(message);
     this.name = "ApiError";
@@ -115,7 +116,19 @@ export async function apiClient<T>(path: string, options: RequestOptions = {}): 
   }
 
   if (!response.ok) {
-    throw new ApiError("Request failed", response.status);
+    let details: unknown;
+
+    try {
+      details = await response.clone().json();
+    } catch {
+      try {
+        details = await response.clone().text();
+      } catch {
+        details = undefined;
+      }
+    }
+
+    throw new ApiError("Request failed", response.status, details);
   }
 
   if (response.status === 204) {
