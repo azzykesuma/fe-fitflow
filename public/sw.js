@@ -1,8 +1,24 @@
-const CACHE_NAME = "fitflow-shell-v1";
-const APP_SHELL = ["/", "/dashboard", "/habits", "/workouts", "/progress", "/icon.svg"];
+const CACHE_NAME = "fitflow-shell-v2";
+const APP_SHELL = ["/", "/icon.svg", "/maskable-icon.svg", "/manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) =>
+      Promise.all(
+        APP_SHELL.map((url) =>
+          fetch(url)
+            .then((response) => {
+              if (response.ok) {
+                return cache.put(url, response);
+              }
+
+              return undefined;
+            })
+            .catch(() => undefined),
+        ),
+      ),
+    ),
+  );
   self.skipWaiting();
 });
 
