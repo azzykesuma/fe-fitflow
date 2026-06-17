@@ -28,6 +28,25 @@ function arrayBufferToBase64(buffer: ArrayBuffer) {
   return btoa(binary);
 }
 
+function arrayBufferToHex(buffer: ArrayBuffer) {
+  return Array.from(new Uint8Array(buffer))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+export async function getPasswordPublicKeyFingerprint() {
+  const publicKeyPem = process.env.NEXT_PUBLIC_AUTH_PASSWORD_PUBLIC_KEY;
+
+  if (!publicKeyPem) {
+    return "missing-public-key";
+  }
+
+  const keyBytes = pemToArrayBuffer(publicKeyPem);
+  const digest = await crypto.subtle.digest("SHA-256", keyBytes);
+
+  return arrayBufferToHex(digest).slice(0, 16);
+}
+
 export async function encryptPassword(password: string) {
   const publicKeyPem = process.env.NEXT_PUBLIC_AUTH_PASSWORD_PUBLIC_KEY;
 
