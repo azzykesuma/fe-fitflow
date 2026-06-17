@@ -134,13 +134,19 @@ Response `200` has the same shape as register.
 
 Status: `Implemented`
 
-Request:
+Request with JSON body:
 
 ```json
 { "refresh_token": "refresh-token" }
 ```
 
-Response `200` returns a new access token and rotated refresh token.
+Request with cookie is also supported. If the body is empty, the backend reads the httpOnly cookie:
+
+```txt
+fitflow_refresh_token=refresh-token
+```
+
+Response `200` returns a new access token and rotated refresh token. The backend also sets a rotated `fitflow_refresh_token` httpOnly cookie.
 
 ### POST /api/auth/logout
 
@@ -157,6 +163,8 @@ Response `200`:
 ```json
 { "data": { "success": true } }
 ```
+
+The backend also clears the `fitflow_refresh_token` cookie.
 
 ### GET /api/auth/me
 
@@ -217,15 +225,19 @@ Request:
 
 Response `200` returns the updated profile.
 
-## Habits
+## Meal Logs
 
-### GET /api/habits
+Meal logs replace the previous habit tracking tables. Use this module to record food eaten for breakfast, lunch, dinner, or snacks, including calories supplied by the frontend.
+
+### GET /api/meal-logs
 
 Status: `Implemented`
 
 Query params:
 
-- `active`: optional boolean, defaults to `true`
+- `from`: optional date, defaults to 7-day range ending today
+- `to`: optional date
+- `meal_type`: optional, one of `breakfast`, `lunch`, `dinner`, `snack`
 
 Response `200`:
 
@@ -234,21 +246,22 @@ Response `200`:
   "data": [
     {
       "id": "uuid",
-      "name": "Drink water",
-      "description": "2L per day",
-      "frequency": "daily",
-      "target_count": 1,
-      "is_active": true,
-      "completed_today": false,
-      "current_streak": 0,
-      "created_at": "2026-06-11T00:00:00Z",
-      "updated_at": "2026-06-11T00:00:00Z"
+      "meal_date": "2026-06-15",
+      "meal_type": "breakfast",
+      "food_name": "Oatmeal with banana",
+      "calories": 420,
+      "protein_g": 18,
+      "carbs_g": 62,
+      "fat_g": 9,
+      "notes": "Pre-workout meal",
+      "created_at": "2026-06-15T00:00:00Z",
+      "updated_at": "2026-06-15T00:00:00Z"
     }
   ]
 }
 ```
 
-### POST /api/habits
+### POST /api/meal-logs
 
 Status: `Implemented`
 
@@ -256,107 +269,73 @@ Request:
 
 ```json
 {
-  "name": "Drink water",
-  "description": "2L per day",
-  "frequency": "daily",
-  "target_count": 1
+  "meal_date": "2026-06-15",
+  "meal_type": "breakfast",
+  "food_name": "Oatmeal with banana",
+  "calories": 420,
+  "protein_g": 18,
+  "carbs_g": 62,
+  "fat_g": 9,
+  "notes": "Pre-workout meal"
 }
 ```
 
-Response `201` returns the created habit.
+Response `201` returns the created meal log.
 
-### GET /api/habits/{id}
-
-Status: `Planned`
-
-Response `200` returns one habit.
-
-### PUT /api/habits/{id}
-
-Status: `Planned`
-
-Request:
-
-```json
-{
-  "name": "Drink 2L water",
-  "description": "Daily hydration target",
-  "frequency": "daily",
-  "target_count": 1,
-  "is_active": true
-}
-```
-
-Response `200` returns the updated habit.
-
-### DELETE /api/habits/{id}
-
-Status: `Planned`
-
-Soft-deactivates or deletes the habit.
-
-Response `200`:
-
-```json
-{ "data": { "success": true } }
-```
-
-### POST /api/habits/{id}/complete
+### GET /api/meal-logs/calories
 
 Status: `Implemented`
-
-Marks the habit complete for today.
-
-Response `200`:
-
-```json
-{ "data": { "success": true } }
-```
-
-### DELETE /api/habits/{id}/complete
-
-Status: `Implemented`
-
-Removes today's completion log.
-
-Response `200`:
-
-```json
-{ "data": { "success": true } }
-```
-
-### GET /api/habits/logs
-
-Status: `Planned`
 
 Query params:
 
-- `from`: required date, for example `2026-06-01`
-- `to`: required date, for example `2026-06-07`
-- `habit_id`: optional UUID
+- `date`: optional date, defaults to today
 
 Response `200`:
 
 ```json
 {
-  "data": [
-    {
-      "id": "uuid",
-      "habit_id": "uuid",
-      "log_date": "2026-06-15",
-      "completed_count": 1,
-      "is_completed": true,
-      "created_at": "2026-06-15T00:00:00Z"
+  "data": {
+    "date": "2026-06-15",
+    "total_calories": 2100,
+    "by_meal_type": {
+      "breakfast": 420,
+      "lunch": 700,
+      "dinner": 800,
+      "snack": 180
     }
-  ]
+  }
 }
+```
+
+### GET /api/meal-logs/{id}
+
+Status: `Implemented`
+
+Response `200` returns one meal log.
+
+### PUT /api/meal-logs/{id}
+
+Status: `Implemented`
+
+Request accepts the same fields as create.
+
+Response `200` returns the updated meal log.
+
+### DELETE /api/meal-logs/{id}
+
+Status: `Implemented`
+
+Response `200`:
+
+```json
+{ "data": { "success": true } }
 ```
 
 ## Workout Plans
 
 ### GET /api/workout-plans
 
-Status: `Planned`
+Status: `Implemented`
 
 Response `200`:
 
@@ -378,7 +357,7 @@ Response `200`:
 
 ### POST /api/workout-plans
 
-Status: `Planned`
+Status: `Implemented`
 
 Request:
 
@@ -394,7 +373,7 @@ Response `201` returns the created workout plan.
 
 ### GET /api/workout-plans/{id}
 
-Status: `Planned`
+Status: `Implemented`
 
 Response `200`:
 
@@ -425,23 +404,23 @@ Response `200`:
 
 ### PUT /api/workout-plans/{id}
 
-Status: `Planned`
+Status: `Implemented`
 
 Request:
 
 ```json
-{
-  "name": "Pull Day",
-  "description": "Back, biceps, rear delts",
-  "scheduled_day": "monday"
-}
+  {
+    "name": "Pull Day",
+    "description": "Back, biceps, rear delts",
+    "scheduled_day": "monday"
+  }
 ```
 
 Response `200` returns the updated workout plan.
 
 ### DELETE /api/workout-plans/{id}
 
-Status: `Planned`
+Status: `Implemented`
 
 Deletes the workout plan and its planned exercises. Historical workout sessions remain because set logs store exercise snapshots.
 
@@ -453,7 +432,7 @@ Response `200`:
 
 ### GET /api/workout-plans/today
 
-Status: `Planned`
+Status: `Implemented`
 
 Returns workout plans scheduled for the current day.
 
@@ -463,7 +442,7 @@ Response `200` returns a list of workout plans.
 
 ### POST /api/workout-plans/{id}/exercises
 
-Status: `Planned`
+Status: `Implemented`
 
 Request:
 
@@ -483,7 +462,7 @@ Response `201` returns the created exercise.
 
 ### PUT /api/exercises/{id}
 
-Status: `Planned`
+Status: `Implemented`
 
 Request:
 
@@ -503,7 +482,7 @@ Response `200` returns the updated exercise.
 
 ### DELETE /api/exercises/{id}
 
-Status: `Planned`
+Status: `Implemented`
 
 Deletes the planned exercise. Historical set logs keep `exercise_name` as a snapshot.
 
@@ -680,15 +659,19 @@ Response `200`:
 
 ### POST /api/body-measurements
 
-Status: `Planned`
+Status: `Implemented`
+
+Alias:
+
+```txt
+POST /api/progress/body-measurements
+```
 
 Request:
 
 ```json
 {
   "weight_kg": 78.5,
-  "bmi": 25.63,
-  "body_fat_percentage": 18.5,
   "neck_cm": 38,
   "shoulder_cm": 116,
   "chest_cm": 100,
@@ -709,6 +692,13 @@ Request:
 ```
 
 Response `201` returns the created measurement.
+
+`bmi` and `body_fat_percentage` are calculated by the backend when enough data is available. Do not send them from the frontend.
+
+Calculation inputs:
+
+- `bmi`: requires `users.height_cm` and request `weight_kg`
+- `body_fat_percentage`: requires `users.height_cm`, `neck_cm`, and `waist_cm` or `belly_cm`; `hips_cm` is used when present
 
 ### GET /api/body-measurements/{id}
 
@@ -746,10 +736,12 @@ Response `200`:
 {
   "data": {
     "date": "2026-06-15",
-    "habits": {
-      "total": 5,
-      "completed": 3,
-      "completion_rate": 60
+    "meals": {
+      "total_calories_today": 2100,
+      "breakfast_calories": 420,
+      "lunch_calories": 700,
+      "dinner_calories": 800,
+      "snack_calories": 180
     },
     "workouts": {
       "completed_this_week": 4,
@@ -768,7 +760,7 @@ Response `200`:
 }
 ```
 
-### GET /api/progress/habits
+### GET /api/progress/calories
 
 Status: `Planned`
 
@@ -777,7 +769,7 @@ Query params:
 - `from`: required date
 - `to`: required date
 
-Response `200` returns habit completion chart data.
+Response `200` returns calorie intake chart data.
 
 ### GET /api/progress/workouts
 
@@ -792,15 +784,27 @@ Response `200` returns workout count and duration chart data.
 
 ### GET /api/progress/body-measurements
 
-Status: `Planned`
+Status: `Implemented`
 
 Query params:
 
 - `from`: required date
 - `to`: required date
-- `metric`: optional, for example `weight_kg`, `bmi`, `body_fat_percentage`, `waist_cm`
+Response `200` returns body measurement chart data for weight, BMI, body fat percentage, and waist circumference.
 
-Response `200` returns body measurement chart data.
+```json
+{
+  "data": [
+    {
+      "date": "2026-06-15",
+      "weight_kg": 78.5,
+      "bmi": 25.63,
+      "body_fat_percentage": 18.5,
+      "waist_cm": 84
+    }
+  ]
+}
+```
 
 ### GET /api/progress/exercises
 
@@ -820,7 +824,7 @@ Response `200` returns exercise progression data.
 Endpoint groups map to database tables like this:
 
 - Auth and users: `users`, `refresh_sessions`
-- Habits: `habits`, `habit_logs`
+- Meal logs: `meal_logs`
 - Workout plans: `workout_plans`, `exercises`
 - Workout sessions: `workout_sessions`, `workout_set_logs`
 - Body measurements: `body_measurement_logs`

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Field, Form, Formik, type FieldInputProps } from "formik";
 import { AppShell } from "@/components/layout/app-shell";
 import { TextField } from "@/components/ui/field";
@@ -9,6 +10,7 @@ import type { CreateWorkoutPlanInput } from "@/features/workouts/types";
 const initialValues: CreateWorkoutPlanInput = { name: "", description: "", scheduled_day: "Monday" };
 
 export default function NewWorkoutPage() {
+  const router = useRouter();
   const createWorkoutPlan = useCreateWorkoutPlan();
 
   return (
@@ -22,7 +24,12 @@ export default function NewWorkoutPage() {
             return errors;
           }}
           onSubmit={(values, helpers) => {
-            createWorkoutPlan.mutate(values, { onSettled: () => helpers.setSubmitting(false) });
+            createWorkoutPlan.mutate(values, {
+              onSuccess: () => {
+                router.push("/workouts");
+              },
+              onSettled: () => helpers.setSubmitting(false),
+            });
           }}
         >
           {({ errors, touched, isSubmitting }) => (

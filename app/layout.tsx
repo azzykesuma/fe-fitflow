@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     default: "FitFlow",
     template: "%s | FitFlow",
   },
-  description: "Habit and workout tracking for consistent training progress.",
+  description: "Meal, workout, and progress tracking for consistent fitness progress.",
   applicationName: "FitFlow",
   appleWebApp: {
     capable: true,

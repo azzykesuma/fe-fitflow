@@ -27,7 +27,7 @@ export function LogoutButton() {
           },
         });
       }}
-      className="shrink-0 rounded-full border border-red-300/20 px-3 py-2 text-[0.65rem] font-black text-red-100 transition hover:border-red-300/50 disabled:opacity-60"
+      className="shrink-0 rounded-full border border-red-500/20 bg-red-950/10 px-3.5 py-1.5 text-xs font-semibold text-red-300 transition-all duration-300 hover:border-red-500/45 hover:bg-red-500/10 hover:text-red-200 hover:shadow-[0_0_12px_rgba(239,68,68,0.15)] active:scale-95 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
     >
       {logout.isPending ? "Logging out..." : "Logout"}
     </button>

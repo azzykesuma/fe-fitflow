@@ -38,7 +38,7 @@ export default function LoginPage() {
           FitFlow
         </Link>
         <h1 className="mb-2 text-4xl font-black tracking-[-0.04em]">Welcome back</h1>
-        <p className="mb-8 text-slate-300">Log in to sync habits, workouts, and progress with the API.</p>
+        <p className="mb-8 text-slate-300">Log in to sync meals, workouts, and progress with the API.</p>
         <Formik
           initialValues={initialValues}
           validate={(values) => {

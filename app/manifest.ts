@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "FitFlow",
     short_name: "FitFlow",
-    description: "Track habits, workouts, and progress from a mobile-friendly PWA.",
+    description: "Track meals, workouts, and progress from a mobile-friendly PWA.",
     start_url: "/dashboard",
     scope: "/",
     display: "standalone",

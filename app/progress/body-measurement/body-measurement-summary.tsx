@@ -1,5 +1,6 @@
 "use client";
 
+import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useBodyMeasurements } from "@/features/progress/hooks";
 import type { BodyMeasurement } from "@/features/progress/types";
 
@@ -34,11 +35,16 @@ export function BodyMeasurementSummary() {
           <p className="mt-1 text-xs font-bold text-lime-200">
             {measurementsQuery.isLoading ? "Loading measurements..." : latest ? `Latest entry: ${latest.date ?? latest.log_date}` : "No measurements found for this week"}
           </p>
-          <div className="mt-5 flex h-36 items-end gap-2 rounded-2xl bg-lime-300/10 p-3 lg:h-56">
+          <div className="mt-5 h-36 rounded-2xl bg-lime-300/10 p-3 lg:h-56">
             {chartValues.length ? (
-              chartValues.map((item, index) => (
-                <div key={item.id ?? `${item.date ?? item.log_date}-${index}`} className="flex-1 rounded-t-xl bg-lime-300/80" style={{ height: `${Math.max(18, Math.min(100, item.weight_kg))}%` }} />
-              ))
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartValues.map((item) => ({ date: item.date ?? item.log_date, weight: item.weight_kg }))} margin={{ left: -24, right: 4, top: 8, bottom: 0 }}>
+                  <XAxis dataKey="date" tick={{ fill: "#64748b", fontSize: 10 }} tickLine={false} axisLine={false} />
+                  <YAxis tick={{ fill: "#64748b", fontSize: 10 }} tickLine={false} axisLine={false} />
+                  <Tooltip contentStyle={{ background: "#07120c", border: "1px solid rgba(190,242,100,0.18)", borderRadius: 12, color: "#f8fafc" }} />
+                  <Line type="monotone" dataKey="weight" stroke="#bef264" strokeWidth={3} dot={{ fill: "#bef264", r: 3 }} />
+                </LineChart>
+              </ResponsiveContainer>
             ) : (
               <div className="grid flex-1 place-items-center text-center text-xs font-bold text-slate-500">Add measurements to build your trend</div>
             )}

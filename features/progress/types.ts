@@ -1,10 +1,5 @@
 export type DashboardSummary = {
   date: string;
-  habits: {
-    total: number;
-    completed: number;
-    completion_rate: number;
-  };
   workouts: {
     completed_this_week: number;
     current_streak: number;

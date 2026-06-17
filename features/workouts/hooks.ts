@@ -1,9 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { addExercise, addWorkoutSet, createWorkoutPlan, deleteExercise, deleteWorkoutPlan, deleteWorkoutSession, finishWorkoutSession, getWorkoutPlan, getWorkoutPlans, getWorkoutSession, getWorkoutSessions, startWorkoutSession, updateExercise, updateWorkoutPlan } from "./api";
+import { addExercise, addWorkoutSet, createWorkoutPlan, deleteExercise, deleteWorkoutPlan, deleteWorkoutSession, finishWorkoutSession, getWorkoutPlan, getWorkoutPlans, getWorkoutPlansToday, getWorkoutSession, getWorkoutSessions, startWorkoutSession, updateExercise, updateWorkoutPlan } from "./api";
 import type { CreateExerciseInput, CreateWorkoutSetInput, FinishWorkoutSessionInput, UpdateExerciseInput, UpdateWorkoutPlanInput } from "./types";
 
 export function useWorkoutPlans() {
   return useQuery({ queryKey: ["workout-plans"], queryFn: getWorkoutPlans });
+}
+
+export function useWorkoutPlansToday() {
+  return useQuery({ queryKey: ["workout-plans", "today"], queryFn: getWorkoutPlansToday });
 }
 
 export function useWorkoutPlan(id: string) {

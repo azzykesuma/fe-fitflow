@@ -1,13 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createBodyMeasurement, createBodyWeight, getBodyMeasurements, getBodyWeightLogs, getDashboardSummary, getHabitProgress, getWorkoutProgress } from "./api";
+import { createBodyMeasurement, createBodyWeight, getBodyMeasurements, getBodyWeightLogs, getDashboardSummary, getWorkoutProgress } from "./api";
 import type { DateRangeQuery } from "./types";
 
 export function useDashboardSummary() {
   return useQuery({ queryKey: ["dashboard"], queryFn: getDashboardSummary });
-}
-
-export function useHabitProgress() {
-  return useQuery({ queryKey: ["progress", "habits"], queryFn: getHabitProgress });
 }
 
 export function useWorkoutProgress() {

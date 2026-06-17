@@ -3,6 +3,8 @@ export type WorkoutPlan = {
   name: string;
   description?: string;
   scheduled_day?: string;
+  exercises?: Exercise[];
+  exercise_count?: number;
 };
 
 export type CreateWorkoutPlanInput = {

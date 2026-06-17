@@ -30,10 +30,6 @@ export function getDashboardSummary() {
   return apiClient<DashboardSummary>("/api/dashboard");
 }
 
-export function getHabitProgress() {
-  return apiClient<ProgressPoint[]>("/api/progress/habits");
-}
-
 export function getWorkoutProgress() {
   return apiClient<ProgressPoint[]>("/api/progress/workouts");
 }
