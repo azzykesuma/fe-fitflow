@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="FitFlow icon">
+  <rect width="512" height="512" rx="116" fill="#07110d"/>
+  <path d="M112 305c61-3 88-124 143-124 46 0 48 88 91 88 24 0 39-23 54-58" fill="none" stroke="#8cff7a" stroke-width="42" stroke-linecap="round"/>
+  <circle cx="178" cy="178" r="34" fill="#2dd4bf"/>
+  <circle cx="344" cy="336" r="46" fill="#8cff7a"/>
+</svg>
