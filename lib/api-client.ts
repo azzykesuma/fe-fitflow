@@ -116,7 +116,7 @@ export async function apiClient<T>(path: string, options: RequestOptions = {}): 
   }
 
   if (!response.ok) {
-    let details: unknown;
+    let details: any;
 
     try {
       details = await response.clone().json();
@@ -128,7 +128,20 @@ export async function apiClient<T>(path: string, options: RequestOptions = {}): 
       }
     }
 
-    throw new ApiError("Request failed", response.status, details);
+    let message = "Request failed";
+    if (details && typeof details === "object") {
+      if (details.error && typeof details.error === "object" && typeof details.error.message === "string") {
+        message = details.error.message;
+      } else if (typeof details.error === "string") {
+        message = details.error;
+      } else if (typeof details.message === "string") {
+        message = details.message;
+      }
+    } else if (typeof details === "string" && details.trim().length > 0) {
+      message = details;
+    }
+
+    throw new ApiError(message, response.status, details);
   }
 
   if (response.status === 204) {

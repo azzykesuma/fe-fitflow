@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/api-client";
 import { setAuthTokens } from "@/lib/auth-token";
 import { encryptPassword } from "@/lib/password-encryption";
-import type { AuthResponse, CurrentUserResponse, LoginInput, LoginPayload, RegisterInput, RegisterPayload } from "./types";
+import type { AuthResponse, CurrentUserResponse, LoginInput, LoginPayload, RegisterInput, RegisterPayload, UpdateProfileInput, User } from "./types";
 
 export async function login(input: LoginInput) {
   const { password, ...payload } = input;
@@ -40,3 +40,15 @@ export function refreshSession() {
 export function logout() {
   return apiClient<void>("/api/auth/logout", { method: "POST" });
 }
+
+export function getUserProfile() {
+  return apiClient<{ data: User }>("/api/users/me").then((response) => response.data);
+}
+
+export function updateUserProfile(input: UpdateProfileInput) {
+  return apiClient<{ data: User }>("/api/users/me", {
+    method: "PATCH",
+    body: JSON.stringify(input),
+  }).then((response) => response.data);
+}
+

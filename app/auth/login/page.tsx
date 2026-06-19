@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Field, Form, Formik, type FieldInputProps } from "formik";
 import { toast } from "sonner";
 import { TextField } from "@/components/ui/field";
-import { getSafeAuthErrorMessage } from "@/features/auth/errors";
+
 import { useLogin } from "@/features/auth/hooks";
 import type { LoginInput } from "@/features/auth/types";
 import { setAuthTokens } from "@/lib/auth-token";
@@ -18,7 +18,6 @@ export default function LoginPage() {
   const router = useRouter();
   const login = useLogin();
   const [successMessage, setSuccessMessage] = useState("");
-  const [debugKeyFingerprint, setDebugKeyFingerprint] = useState("");
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -33,11 +32,6 @@ export default function LoginPage() {
     }
   }, []);
 
-  useEffect(() => {
-    if (process.env.NODE_ENV !== "production" || process.env.NEXT_PUBLIC_DEBUG_AUTH_ERRORS === "true") {
-      getPasswordPublicKeyFingerprint().then(setDebugKeyFingerprint).catch(() => setDebugKeyFingerprint("fingerprint-unavailable"));
-    }
-  }, []);
 
   return (
     <main className="grid min-h-screen place-items-center px-4 py-8">
@@ -64,7 +58,9 @@ export default function LoginPage() {
                 onSuccess: (response) => {
                   setAuthTokens(response.data);
                   toast.success("Login successful.");
-                  router.push("/dashboard");
+                  const params = new URLSearchParams(window.location.search);
+                  const redirectUrl = params.get("redirect") ?? "/dashboard";
+                  router.push(redirectUrl);
                   router.refresh();
                 },
                 onSettled: () => helpers.setSubmitting(false),
@@ -79,8 +75,7 @@ export default function LoginPage() {
               <Field name="password">{({ field }: { field: FieldInputProps<string> }) => <TextField<LoginInput> field={field} errors={errors} touched={touched} label="Password" type="password" autoComplete="current-password" />}</Field>
               {login.isError ? (
                 <p className="rounded-2xl bg-red-400/10 p-3 text-sm font-semibold text-red-200">
-                  {getSafeAuthErrorMessage(login.error, "Login failed. Check your details and try again.")}
-                  {debugKeyFingerprint ? <span className="mt-2 block text-xs text-red-200/80">Public key fingerprint: {debugKeyFingerprint}</span> : null}
+                  {login.error?.message || "Login failed. Check your details and try again."}
                 </p>
               ) : null}
               <button type="submit" disabled={isSubmitting || login.isPending} className="w-full rounded-2xl bg-lime-300 px-5 py-3 font-black text-slate-950 disabled:opacity-60">

@@ -5,6 +5,17 @@ function canUseStorage() {
   return typeof window !== "undefined";
 }
 
+function setCookie(name: string, value: string, days = 7) {
+  if (typeof document === "undefined") return;
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${value}; expires=${expires}; path=/; SameSite=Lax`;
+}
+
+function deleteCookie(name: string) {
+  if (typeof document === "undefined") return;
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Lax`;
+}
+
 export function getAuthToken() {
   if (!canUseStorage()) {
     return undefined;
@@ -19,6 +30,8 @@ export function setAuthToken(token: string) {
   }
 
   window.localStorage.setItem(AUTH_TOKEN_KEY, token);
+  setCookie("access_token", token);
+  setCookie("fitflow_session", "true");
 }
 
 export function getRefreshToken() {
@@ -53,6 +66,8 @@ export function clearAuthToken() {
   }
 
   window.localStorage.removeItem(AUTH_TOKEN_KEY);
+  deleteCookie("access_token");
+  deleteCookie("fitflow_session");
 }
 
 export function clearAuthTokens() {
@@ -62,4 +77,7 @@ export function clearAuthTokens() {
 
   window.localStorage.removeItem(AUTH_TOKEN_KEY);
   window.localStorage.removeItem(REFRESH_TOKEN_KEY);
+  deleteCookie("access_token");
+  deleteCookie("fitflow_session");
 }
+

@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { getSafeAuthErrorMessage } from "@/features/auth/errors";
 import { useLogout } from "@/features/auth/hooks";
 import { clearAuthTokens } from "@/lib/auth-token";
 
@@ -23,7 +22,7 @@ export function LogoutButton() {
             router.refresh();
           },
           onError: (error) => {
-            toast.error(getSafeAuthErrorMessage(error, "We could not log you out. Please try again."));
+            toast.error(error?.message || "We could not log you out. Please try again.");
           },
         });
       }}

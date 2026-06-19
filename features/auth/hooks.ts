@@ -1,5 +1,5 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { getCurrentUser, login, logout, refreshSession, register } from "./api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getCurrentUser, getUserProfile, login, logout, refreshSession, register, updateUserProfile } from "./api";
 
 export function useLogin() {
   return useMutation({ mutationFn: login });
@@ -20,3 +20,20 @@ export function useLogout() {
 export function useRefreshSession() {
   return useMutation({ mutationFn: refreshSession });
 }
+
+export function useUserProfile() {
+  return useQuery({ queryKey: ["users", "me"], queryFn: getUserProfile, retry: false });
+}
+
+export function useUpdateUserProfile() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateUserProfile,
+    onSuccess: (data) => {
+      queryClient.setQueryData(["users", "me"], data);
+      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
+    },
+  });
+}
+

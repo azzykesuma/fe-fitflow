@@ -4,9 +4,11 @@ import Link from "next/link";
 import { Area, AreaChart, Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { DashboardShell } from "./dashboard-shell";
 import { useMealCalories, useMealLogs } from "@/features/meals/hooks";
-import { useBodyMeasurements, useBodyWeightLogs, useWorkoutProgress } from "@/features/progress/hooks";
+import { useBodyMeasurements, useWorkoutProgress } from "@/features/progress/hooks";
 import type { BodyMeasurement } from "@/features/progress/types";
-import { useWorkoutPlans } from "@/features/workouts/hooks";
+// import { useWorkoutPlans } from "@/features/workouts/hooks";
+import { getAuthToken } from "@/lib/auth-token";
+import { toast } from "sonner";
 
 const today = new Date().toISOString().slice(0, 10);
 const mealTypes = ["breakfast", "lunch", "dinner", "snack"] as const;
@@ -37,13 +39,50 @@ function EmptyChartState({ isLoading, hasData }: Readonly<{ isLoading: boolean; 
 
 export default function DashboardPage() {
   const meals = useMealCalories(today);
+  
+  const handleDownloadReport = async () => {
+    try {
+      const token = getAuthToken();
+      if (!token) {
+        toast.error("You must be logged in to download the report.");
+        return;
+      }
+
+      const response = await fetch(`/api/reports/summary?token=${token}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch report: ${response.statusText}`);
+      }
+
+      const blob = await response.blob();
+      const contentDisposition = response.headers.get("Content-Disposition");
+      let filename = "FitFlow_Summary.xlsx";
+      if (contentDisposition) {
+        const match = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (match?.[1]) {
+          filename = match[1];
+        }
+      }
+
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(downloadUrl);
+      toast.success("Report downloaded successfully.");
+    } catch (error) {
+      console.error("Report download failed:", error);
+      toast.error("Could not download summary report. Please try again.");
+    }
+  };
   const mealLogs = useMealLogs(today);
-  const workoutPlans = useWorkoutPlans();
-  const workouts = useWorkoutProgress();
-  const bodyWeights = useBodyWeightLogs();
+  // const workoutPlans = useWorkoutPlans();
+  // const workouts = useWorkoutProgress();
   const bodyMeasurements = useBodyMeasurements();
-  const latestWeight = bodyWeights.data?.at(-1)?.weight_kg;
   const latestMeasurement = bodyMeasurements.data?.[0];
+  const latestWeight = latestMeasurement?.weight_kg;
   const latestBodyFat = getBodyFat(latestMeasurement);
   const bodyFatPoints = (bodyMeasurements.data ?? [])
     .slice(0, 7)
@@ -51,19 +90,33 @@ export default function DashboardPage() {
     .map((measurement) => ({ date: getMeasurementDate(measurement), value: getBodyFat(measurement) ?? 0 }))
     .filter((point) => point.value > 0);
   const caloriePoints = mealTypes.map((type) => ({ type, calories: meals.data?.by_meal_type[type] ?? 0 }));
-  const todayWorkout = workoutPlans.data?.[0];
+  // const todayWorkout = workoutPlans.data?.[0];
   const statCards = [
     { label: "Calories", value: meals.data?.total_calories?.toString() ?? "--", hint: "today" },
     { label: "Meals", value: mealLogs.data?.length?.toString() ?? "--", hint: "logged today" },
-    { label: "Workouts", value: workouts.data?.length?.toString() ?? "--", hint: "tracked" },
+    // { label: "Workouts", value: workouts.data?.length?.toString() ?? "--", hint: "tracked" },
     { label: "Weight", value: formatNumber(latestWeight, "kg"), hint: "latest" },
   ];
 
   return (
     <DashboardShell>
-      <div className="grid grid-cols-3 gap-2 lg:grid-cols-4 lg:gap-3">
+      <div className="mb-4 flex items-center justify-between">
+        <span className="text-[0.62rem] font-black uppercase tracking-[0.18em] text-slate-500">Summary Dashboard</span>
+        <button
+          type="button"
+          onClick={handleDownloadReport}
+          className="inline-flex items-center gap-1.5 rounded-xl border border-lime-200/20 bg-lime-300/10 px-3.5 py-2 text-xs font-black text-lime-200 hover:bg-lime-300/20 active:scale-[0.98] transition cursor-pointer"
+        >
+          <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          Download Report
+        </button>
+      </div>
+
+      <div className="grid grid-cols-3 gap-2 lg:gap-4">
         {statCards.map((card) => (
-          <article key={card.label} className="rounded-2xl border border-lime-200/10 bg-[#0b1710] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] last:hidden lg:last:block lg:p-5">
+          <article key={card.label} className="rounded-2xl border border-lime-200/10 bg-[#0b1710] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] lg:p-5">
             <p className="text-[0.6rem] font-black uppercase tracking-wider text-slate-500">{card.label}</p>
             <p className="mt-2 text-xl font-black tracking-tight text-white lg:text-3xl">{card.value}</p>
             <p className="mt-1 text-[0.62rem] font-bold text-lime-200/80">{card.hint}</p>
@@ -71,22 +124,7 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      <section className="mt-4 overflow-hidden rounded-[1.35rem] border border-lime-200/10 bg-[#0a1710] p-3 lg:mt-6 lg:p-4">
-        <div className="rounded-[1.1rem] bg-[linear-gradient(135deg,rgba(12,36,24,0.95),rgba(5,11,8,0.9)),radial-gradient(circle_at_80%_20%,rgba(167,255,79,0.22),transparent_9rem)] p-4 lg:min-h-64 lg:p-6">
-          <p className="text-[0.62rem] font-black uppercase tracking-[0.18em] text-lime-200">Today workout</p>
-          <div className="mt-8 flex items-end justify-between gap-4 lg:mt-28">
-            <div>
-              <h2 className="text-2xl font-black leading-none tracking-tight lg:text-5xl">{todayWorkout?.name ?? "No plan yet"}</h2>
-              <p className="mt-1 text-xs font-bold text-slate-400">{todayWorkout?.scheduled_day ? `Scheduled ${todayWorkout.scheduled_day}` : "Create a workout plan to start training"}</p>
-            </div>
-            <Link href={todayWorkout?.id ? `/workouts/${todayWorkout.id}` : "/workouts/new"} className="rounded-xl bg-lime-300 px-4 py-3 text-xs font-black text-slate-950">
-              {todayWorkout?.id ? "Open" : "Create"}
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_1fr_0.9fr]">
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
         <section className="rounded-[1.35rem] border border-lime-200/10 bg-[#07120c]/90 p-4">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-base font-black">Today's Meals</h2>
@@ -116,22 +154,6 @@ export default function DashboardPage() {
               </Link>
             ))}
             {!mealLogs.isLoading && !mealLogs.data?.length ? <p className="rounded-2xl bg-[#101b15] p-3 text-sm font-bold text-slate-500">No meals logged today.</p> : null}
-          </div>
-        </section>
-
-        <section className="rounded-[1.35rem] border border-lime-200/10 bg-[#07120c]/90 p-4">
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-base font-black">Workout Plans</h2>
-            <Link href="/workouts/new" className="text-[0.65rem] font-black text-lime-200">New</Link>
-          </div>
-          <div className="space-y-3">
-            {workoutPlans.data?.slice(0, 4).map((plan) => (
-              <Link key={plan.id} href={`/workouts/${plan.id}`} className="block rounded-2xl border border-white/5 bg-[#101b15] p-3">
-                <p className="text-sm font-black">{plan.name}</p>
-                <p className="text-[0.68rem] font-bold text-slate-500">{plan.scheduled_day ?? "Unscheduled"}</p>
-              </Link>
-            ))}
-            {!workoutPlans.isLoading && !workoutPlans.data?.length ? <p className="rounded-2xl bg-[#101b15] p-3 text-sm font-bold text-slate-500">No workout plans yet.</p> : null}
           </div>
         </section>
 

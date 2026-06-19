@@ -6,9 +6,9 @@ import { motion } from "motion/react";
 import { LogoutButton } from "@/components/auth/logout-button";
 
 const navItems = [
-  { href: "/dashboard", label: "Dash" },
+  { href: "/dashboard", label: "Dashboard" },
   { href: "/meals", label: "Meals" },
-  { href: "/workouts", label: "Work" },
+  { href: "/workouts", label: "Workout" },
   { href: "/progress", label: "Progress" },
 ];
 
@@ -17,10 +17,10 @@ export function AppShell({ children, title, eyebrow }: Readonly<{ children: Reac
 
   return (
     <main className="mx-auto min-h-screen w-full max-w-md px-3 pb-24 pt-3 sm:px-4 lg:max-w-6xl lg:px-6 lg:pb-10">
-      <header className="sticky top-3.5 z-20 mb-6 rounded-2xl border border-t-lime-500/15 border-b-white/[0.03] border-x-white/[0.04] bg-[#050b08]/80 px-4 py-2.5 shadow-[0_16px_40px_-8px_rgba(0,0,0,0.6)] backdrop-blur-md">
+      <header className="sticky top-3.5 z-20 mb-6 rounded-2xl border border-t-lime-500/15 border-b-white/3 border-x-white/4 bg-[#050b08]/80 px-4 py-2.5 shadow-[0_16px_40px_-8px_rgba(0,0,0,0.6)] backdrop-blur-md">
         <div className="flex items-center justify-between gap-3">
           <Link href="/dashboard" className="flex items-center gap-2.5 group cursor-pointer">
-            <div className="relative flex items-center justify-center size-7.5 rounded-xl bg-gradient-to-tr from-lime-400 to-emerald-500 p-[1px] transition-all duration-300 group-hover:scale-105 group-hover:rotate-3 shadow-[0_0_12px_rgba(163,230,53,0.15)]">
+            <div className="relative flex items-center justify-center size-7.5 rounded-xl bg-linear-to-tr from-lime-400 to-emerald-500 p-px transition-all duration-300 group-hover:scale-105 group-hover:rotate-3 shadow-[0_0_12px_rgba(163,230,53,0.15)]">
               <div className="flex items-center justify-center size-full rounded-[11px] bg-[#050b08] text-[9.5px] font-black text-lime-300 tracking-tighter">
                 FF
               </div>
@@ -31,7 +31,7 @@ export function AppShell({ children, title, eyebrow }: Readonly<{ children: Reac
             </span>
           </Link>
           
-          <nav className="hidden items-center gap-1 bg-white/[0.02] border border-white/[0.04] p-1 rounded-full lg:flex">
+          <nav className="hidden items-center gap-1 bg-white/2 border border-white/4 p-1 rounded-full lg:flex">
             {navItems.map((item) => {
               const isActive = pathname ? (item.href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(item.href)) : false;
               return (
@@ -68,7 +68,7 @@ export function AppShell({ children, title, eyebrow }: Readonly<{ children: Reac
       
       {children}
       
-      <nav className="fixed inset-x-0 bottom-4 z-30 mx-auto grid w-[calc(100%-24px)] max-w-sm grid-cols-4 gap-1 rounded-[1.25rem] border border-white/[0.06] bg-[#050b08]/85 p-1.5 shadow-[0_16px_50px_rgba(0,0,0,0.6)] backdrop-blur-md lg:hidden">
+      <nav className="fixed inset-x-0 bottom-4 z-30 mx-auto grid w-[calc(100%-24px)] max-w-sm grid-cols-4 gap-1 rounded-[1.25rem] border border-white/6 bg-[#050b08]/85 p-1.5 shadow-[0_16px_50px_rgba(0,0,0,0.6)] backdrop-blur-md lg:hidden">
         {navItems.map((item) => {
           const isActive = pathname ? (item.href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(item.href)) : false;
           return (
