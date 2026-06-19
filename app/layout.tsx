@@ -3,6 +3,7 @@ import "./globals.css";
 import { Providers } from "@/components/providers";
 import { RegisterServiceWorker } from "@/components/pwa/register-service-worker";
 import { Toaster } from "@/components/ui/sonner";
+import { Analytics } from "@vercel/analytics/next"
 
 export const metadata: Metadata = {
   title: {
@@ -40,6 +41,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <Toaster />
           <RegisterServiceWorker />
         </Providers>
+        <Analytics />
       </body>
     </html>
   );
