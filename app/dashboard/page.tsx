@@ -6,9 +6,9 @@ import { DashboardShell } from "./dashboard-shell";
 import { useMealCalories, useMealLogs } from "@/features/meals/hooks";
 import { useBodyMeasurements, useWorkoutProgress } from "@/features/progress/hooks";
 import type { BodyMeasurement } from "@/features/progress/types";
-// import { useWorkoutPlans } from "@/features/workouts/hooks";
 import { getAuthToken } from "@/lib/auth-token";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 const today = new Date().toISOString().slice(0, 10);
 const mealTypes = ["breakfast", "lunch", "dinner", "snack"] as const;
@@ -27,7 +27,14 @@ function getMeasurementDate(measurement: BodyMeasurement) {
 
 function EmptyChartState({ isLoading, hasData }: Readonly<{ isLoading: boolean; hasData: boolean }>) {
   if (isLoading) {
-    return <div className="grid h-full place-items-center text-center text-xs font-bold text-slate-500">Loading...</div>;
+    return (
+      <div className="grid h-full place-items-center">
+        <div className="flex flex-col items-center justify-center space-y-2.5">
+          <div className="size-6 animate-spin rounded-full border-2 border-lime-350 border-t-transparent shadow-[0_0_12px_rgba(163,230,53,0.15)]" />
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Loading charts...</span>
+        </div>
+      </div>
+    );
   }
 
   if (!hasData) {
@@ -78,8 +85,6 @@ export default function DashboardPage() {
     }
   };
   const mealLogs = useMealLogs(today);
-  // const workoutPlans = useWorkoutPlans();
-  // const workouts = useWorkoutProgress();
   const bodyMeasurements = useBodyMeasurements();
   const latestMeasurement = bodyMeasurements.data?.[0];
   const latestWeight = latestMeasurement?.weight_kg;
@@ -90,11 +95,9 @@ export default function DashboardPage() {
     .map((measurement) => ({ date: getMeasurementDate(measurement), value: getBodyFat(measurement) ?? 0 }))
     .filter((point) => point.value > 0);
   const caloriePoints = mealTypes.map((type) => ({ type, calories: meals.data?.by_meal_type[type] ?? 0 }));
-  // const todayWorkout = workoutPlans.data?.[0];
   const statCards = [
     { label: "Calories", value: meals.data?.total_calories?.toString() ?? "--", hint: "today" },
     { label: "Meals", value: mealLogs.data?.length?.toString() ?? "--", hint: "logged today" },
-    // { label: "Workouts", value: workouts.data?.length?.toString() ?? "--", hint: "tracked" },
     { label: "Weight", value: formatNumber(latestWeight, "kg"), hint: "latest" },
   ];
 
@@ -102,16 +105,16 @@ export default function DashboardPage() {
     <DashboardShell>
       <div className="mb-4 flex items-center justify-between">
         <span className="text-[0.62rem] font-black uppercase tracking-[0.18em] text-slate-500">Summary Dashboard</span>
-        <button
+        <Button
           type="button"
           onClick={handleDownloadReport}
-          className="inline-flex items-center gap-1.5 rounded-xl border border-lime-200/20 bg-lime-300/10 px-3.5 py-2 text-xs font-black text-lime-200 hover:bg-lime-300/20 active:scale-[0.98] transition cursor-pointer"
+          className="inline-flex items-center gap-1.5 rounded-xl border border-lime-200/20 bg-lime-300/10 px-3.5 py-2 text-lime-50! hover:bg-lime-300/20! active:scale-[0.98] transition cursor-pointer text-xs"
         >
           <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>
           Download Report
-        </button>
+        </Button>
       </div>
 
       <div className="grid grid-cols-3 gap-2 lg:gap-4">

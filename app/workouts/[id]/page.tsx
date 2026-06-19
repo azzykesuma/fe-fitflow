@@ -13,6 +13,7 @@ import {
   useDeleteExercise,
 } from "@/features/workouts/hooks";
 import type { CreateExerciseInput, Exercise } from "@/features/workouts/types";
+import { Button } from "@/components/ui/button";
 
 const DAYS_OF_WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -215,24 +216,24 @@ export default function WorkoutDetailPage({ params }: Readonly<{ params: Promise
               </div>
 
               <div className="flex gap-2 pt-2">
-                <button
+                <Button
                   type="submit"
                   disabled={updatePlanMutation.isPending}
                   className="flex-1 rounded-xl bg-lime-300 py-2.5 text-xs font-black text-slate-950 hover:bg-lime-400 disabled:opacity-50"
                 >
                   {updatePlanMutation.isPending ? "Saving..." : "Save Changes"}
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   onClick={() => setIsEditingPlan(false)}
                   className="flex-1 rounded-xl border border-white/10 bg-white/5 py-2.5 text-xs font-black text-white hover:bg-white/10"
                 >
                   Cancel
-                </button>
+                </Button>
               </div>
             </form>
           ) : (
-            <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-5 shadow-lg">
+            <div className="rounded-3xl border border-white/10 bg-white/4 p-5 shadow-lg">
               <span className="inline-block rounded-full bg-lime-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-lime-200 border border-lime-300/20">
                 Scheduled: {plan.scheduled_day || "Unscheduled"}
               </span>
@@ -252,27 +253,27 @@ export default function WorkoutDetailPage({ params }: Readonly<{ params: Promise
                     Start Session
                   </Link>
                 ) : (
-                  <button
+                  <Button
                     disabled
                     className="flex w-full justify-center rounded-xl bg-slate-800 py-3 text-xs font-black text-slate-500 cursor-not-allowed"
                   >
                     Start Session (Add exercises first)
-                  </button>
+                  </Button>
                 )}
 
                 <div className="grid grid-cols-2 gap-2">
-                  <button
+                  <Button
                     onClick={handleEditPlanClick}
                     className="rounded-xl border border-white/10 bg-white/5 py-2.5 text-xs font-black text-slate-300 hover:bg-white/10 hover:text-white"
                   >
                     Edit Plan
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => setShowDeleteConfirm(true)}
                     className="rounded-xl border border-red-500/20 bg-red-500/10 py-2.5 text-xs font-black text-red-300 hover:bg-red-500/20 hover:text-red-200"
                   >
                     Delete Plan
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -280,25 +281,25 @@ export default function WorkoutDetailPage({ params }: Readonly<{ params: Promise
 
           {/* Delete Confirmation Overlay / UI */}
           {showDeleteConfirm && (
-            <div className="rounded-[1.5rem] border border-red-500/20 bg-red-950/20 p-5 space-y-3 shadow-lg">
+            <div className="rounded-3xl border border-red-500/20 bg-red-950/20 p-5 space-y-3 shadow-lg">
               <h4 className="text-sm font-black text-red-300">Are you absolutely sure?</h4>
               <p className="text-xs text-slate-400">
                 This will delete the workout plan and all its scheduled exercises. Historical log data will remain unaffected.
               </p>
               <div className="flex gap-2 pt-1">
-                <button
+                <Button
                   onClick={handleDeletePlan}
                   disabled={deletePlanMutation.isPending}
                   className="flex-1 rounded-xl bg-red-500 py-2 text-xs font-black text-white hover:bg-red-600 disabled:opacity-50"
                 >
                   {deletePlanMutation.isPending ? "Deleting..." : "Yes, Delete"}
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => setShowDeleteConfirm(false)}
                   className="flex-1 rounded-xl border border-white/10 bg-white/5 py-2 text-xs font-black text-white hover:bg-white/10"
                 >
                   Cancel
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -311,12 +312,12 @@ export default function WorkoutDetailPage({ params }: Readonly<{ params: Promise
               Exercises ({plan.exercises?.length ?? 0})
             </h3>
             {!isAddingExercise && (
-              <button
+              <Button
                 onClick={() => setIsAddingExercise(true)}
                 className="rounded-lg bg-lime-300/10 border border-lime-300/20 px-3 py-1.5 text-xs font-black text-lime-200 hover:bg-lime-300/20"
               >
                 + Add Exercise
-              </button>
+              </Button>
             )}
           </div>
 
@@ -325,13 +326,13 @@ export default function WorkoutDetailPage({ params }: Readonly<{ params: Promise
             <form onSubmit={handleAddExercise} className="rounded-2xl border border-lime-200/10 bg-[#101b15] p-5 space-y-4 shadow-lg">
               <div className="flex justify-between items-center pb-2 border-b border-white/5">
                 <h4 className="text-sm font-black text-lime-200">New Exercise</h4>
-                <button
+                <Button
                   type="button"
                   onClick={() => setIsAddingExercise(false)}
                   className="text-xs text-slate-400 hover:text-white"
                 >
                   Cancel
-                </button>
+                </Button>
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
@@ -406,13 +407,13 @@ export default function WorkoutDetailPage({ params }: Readonly<{ params: Promise
                 </div>
               </div>
 
-              <button
+              <Button
                 type="submit"
                 disabled={addExerciseMutation.isPending}
                 className="w-full rounded-xl bg-lime-300 py-2.5 text-xs font-black text-slate-950 hover:bg-lime-400 disabled:opacity-50 shadow-md"
               >
                 {addExerciseMutation.isPending ? "Adding..." : "Add to Plan"}
-              </button>
+              </Button>
             </form>
           )}
 
@@ -502,20 +503,20 @@ export default function WorkoutDetailPage({ params }: Readonly<{ params: Promise
                         </div>
 
                         <div className="flex justify-end gap-2 pt-1">
-                          <button
+                          <Button
                             type="submit"
                             disabled={updateExerciseMutation.isPending}
                             className="rounded-lg bg-lime-300 px-3 py-1.5 text-xs font-black text-slate-950 hover:bg-lime-400"
                           >
                             Save
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             type="button"
                             onClick={() => setEditingExerciseId(null)}
                             className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-black text-slate-300 hover:bg-white/10"
                           >
                             Cancel
-                          </button>
+                          </Button>
                         </div>
                       </form>
                     );
@@ -558,7 +559,7 @@ export default function WorkoutDetailPage({ params }: Readonly<{ params: Promise
                       </div>
 
                       <div className="flex items-center gap-2 opacity-60 transition-opacity group-hover:opacity-100">
-                        <button
+                        <Button
                           onClick={() => handleEditExerciseClick(exercise)}
                           className="rounded-lg border border-white/10 bg-white/5 p-2 text-slate-300 hover:bg-lime-300/10 hover:text-lime-200 hover:border-lime-300/20"
                           title="Edit Exercise"
@@ -566,8 +567,8 @@ export default function WorkoutDetailPage({ params }: Readonly<{ params: Promise
                           <svg className="size-3.5 fill-current" viewBox="0 0 24 24">
                             <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
                           </svg>
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           onClick={() => handleDeleteExercise(exercise.id)}
                           className="rounded-lg border border-red-500/20 bg-red-500/5 p-2 text-red-400 hover:bg-red-500/20 hover:text-red-300"
                           title="Delete Exercise"
@@ -575,7 +576,7 @@ export default function WorkoutDetailPage({ params }: Readonly<{ params: Promise
                           <svg className="size-3.5 fill-current" viewBox="0 0 24 24">
                             <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
                           </svg>
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   );

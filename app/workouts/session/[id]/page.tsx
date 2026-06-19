@@ -14,6 +14,7 @@ import {
 } from "@/features/workouts/hooks";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
+import { Button } from "@/components/ui/button";
 
 type SetState = {
   reps: number;
@@ -387,22 +388,16 @@ export default function WorkoutSessionPage({ params }: { params: Promise<{ id: s
                 )}
               </div>
               <div>
-                <button
+                <Button
                   onClick={handleStartWorkout}
-                  disabled={startSessionMutation.isPending}
-                  className="flex items-center gap-2 rounded-xl bg-lime-300 px-6 py-4 text-sm font-black text-slate-950 shadow-[0_4px_20px_rgba(190,242,100,0.3)] transition hover:bg-lime-400 hover:scale-105 active:scale-95 disabled:opacity-50 cursor-pointer"
+                  isLoading={startSessionMutation.isPending}
+                  className="px-6 py-4 text-sm shadow-[0_4px_20px_rgba(190,242,100,0.3)]"
                 >
-                  {startSessionMutation.isPending ? (
-                    <div className="size-4 animate-spin rounded-full border-2 border-slate-950 border-t-transparent" />
-                  ) : (
-                    <>
-                      <svg className="size-4 fill-current" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
-                      <span>Start Workout</span>
-                    </>
-                  )}
-                </button>
+                  <svg className="size-4 fill-current mr-2" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                  <span>Start Workout</span>
+                </Button>
               </div>
             </div>
           </div>
@@ -682,18 +677,14 @@ export default function WorkoutSessionPage({ params }: { params: Promise<{ id: s
                                 <span>Logged</span>
                               </div>
                             ) : (
-                              <button
+                              <Button
                                 type="button"
                                 onClick={() => handleLogSet(exercise.id, s)}
-                                disabled={setInfo.loading || addWorkoutSetMutation.isPending}
-                                className="flex h-11 items-center justify-center rounded-xl bg-lime-300 px-4.5 text-xs font-black text-slate-950 shadow-sm transition hover:bg-lime-400 active:scale-95 disabled:opacity-50 cursor-pointer"
+                                isLoading={setInfo.loading || addWorkoutSetMutation.isPending}
+                                className="h-11 px-4.5 text-xs font-black"
                               >
-                                {setInfo.loading ? (
-                                  <div className="size-4 animate-spin rounded-full border-2 border-slate-950 border-t-transparent" />
-                                ) : (
-                                  "Log Set"
-                                )}
-                              </button>
+                                Log Set
+                              </Button>
                             )}
                           </div>
                         </div>
@@ -724,28 +715,35 @@ export default function WorkoutSessionPage({ params }: { params: Promise<{ id: s
             <h3 className="text-base font-black text-white">Wrap Up Session</h3>
           
 
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-400">Workout Notes</label>
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="e.g. Felt strong on bench press today, but shoulders were a bit tight."
+                className="w-full rounded-xl border border-white/10 bg-slate-950/80 px-3.5 py-3 text-sm text-white outline-none focus:border-lime-300/70 h-24 resize-none"
+              />
+            </div>
+
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
-              <button
+              <Button
                 type="button"
                 onClick={handleFinishWorkout}
-                disabled={finishSessionMutation.isPending}
-                className="flex-1 flex h-12 items-center justify-center rounded-xl bg-lime-300 text-xs font-black text-slate-950 hover:bg-lime-400 transition active:scale-95 disabled:opacity-50 cursor-pointer"
+                isLoading={finishSessionMutation.isPending}
+                className="flex-1 h-12 text-xs"
               >
-                {finishSessionMutation.isPending ? (
-                  <div className="size-4 animate-spin rounded-full border-2 border-slate-950 border-t-transparent" />
-                ) : (
-                  "Finish Workout Session"
-                )}
-              </button>
+                Finish Workout Session
+              </Button>
               
-              <button
+              <Button
                 type="button"
                 onClick={handleDiscardSession}
-                disabled={deleteSessionMutation.isPending}
-                className="rounded-xl border border-red-500/20 bg-red-500/10 px-5 h-12 text-xs font-black text-red-300 hover:bg-red-500/20 transition active:scale-95 disabled:opacity-50 cursor-pointer"
+                isLoading={deleteSessionMutation.isPending}
+                variant="danger"
+                className="px-5 h-12 text-xs"
               >
                 Discard Session
-              </button>
+              </Button>
             </div>
           </div>
         </div>

@@ -1,28 +1,21 @@
 "use client";
 
+import React, { useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Field, Form, Formik, type FieldInputProps } from "formik";
 import { TextField } from "@/components/ui/field";
+import { MaleIcon, FemaleIcon } from "@/components/ui/icons";
+import { Button } from "@/components/ui/button";
 
 import { useRegister } from "@/features/auth/hooks";
 import type { RegisterInput } from "@/features/auth/types";
+import { validateRegister, passwordRules } from "@/features/auth/validation";
 
 const initialValues: RegisterInput = { name: "", email: "", password: "", gender: "male" };
 
-const passwordRules = [
-  { label: "At least 8 characters", test: (value: string) => value.length >= 8 },
-  { label: "At least 1 uppercase letter", test: (value: string) => /[A-Z]/.test(value) },
-  { label: "At least 1 lowercase letter", test: (value: string) => /[a-z]/.test(value) },
-  { label: "At least 1 number", test: (value: string) => /\d/.test(value) },
-  { label: "At least 1 special character", test: (value: string) => /[^A-Za-z0-9]/.test(value) },
-];
-
-function isPasswordValid(password: string) {
-  return passwordRules.every((rule) => rule.test(password));
-}
-
-function PasswordRules({ password }: Readonly<{ password: string }>) {
+// Optimized PasswordRules component using React.memo to prevent unnecessary re-renders
+const PasswordRules = React.memo(function PasswordRules({ password }: Readonly<{ password: string }>) {
   return (
     <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-3 text-sm">
       <p className="mb-2 font-bold text-slate-200">Password must include:</p>
@@ -39,7 +32,44 @@ function PasswordRules({ password }: Readonly<{ password: string }>) {
       </div>
     </div>
   );
+});
+
+// Standalone GenderSelector component optimized with React.memo
+interface GenderSelectorProps {
+  value: "male" | "female";
+  onChange: (value: "male" | "female") => void;
 }
+
+const GenderSelector = React.memo(function GenderSelector({ value, onChange }: Readonly<GenderSelectorProps>) {
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      <Button
+        type="button"
+        onClick={() => onChange("male")}
+        className={`flex items-center justify-center gap-2 rounded-2xl border py-3 transition-all duration-300 cursor-pointer ${
+          value === "male"
+            ? "border-lime-300 bg-lime-300/10 text-lime-200 shadow-[0_0_15px_rgba(190,242,100,0.12)]"
+            : "border-white/10 bg-slate-950/40 text-slate-500 hover:border-white/20 hover:text-slate-300"
+        }`}
+      >
+        <MaleIcon className="size-4" />
+        <span className="text-xs font-black uppercase tracking-wider">Male</span>
+      </Button>
+      <Button
+        type="button"
+        onClick={() => onChange("female")}
+        className={`flex items-center justify-center gap-2 rounded-2xl border py-3 transition-all duration-300 cursor-pointer ${
+          value === "female"
+            ? "border-lime-300 bg-lime-300/10 text-lime-200 shadow-[0_0_15px_rgba(190,242,100,0.12)]"
+            : "border-white/10 bg-slate-950/40 text-slate-500 hover:border-white/20 hover:text-slate-300"
+        }`}
+      >
+        <FemaleIcon className="size-4" />
+        <span className="text-xs font-black uppercase tracking-wider">Female</span>
+      </Button>
+    </div>
+  );
+});
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -47,7 +77,7 @@ export default function RegisterPage() {
 
   return (
     <main className="grid min-h-screen place-items-center px-4 py-8">
-      <section className="w-full max-w-md rounded-[2rem] border border-white/10 bg-white/[0.07] p-6 backdrop-blur">
+      <section className="w-full max-w-md rounded-4xl border border-white/10 bg-white/[0.07] p-6 backdrop-blur">
         <Link href="/" className="mb-8 block text-2xl font-black">
           FitFlow
         </Link>
@@ -55,17 +85,7 @@ export default function RegisterPage() {
         <p className="mb-8 text-slate-300">Start with auth-ready forms that target the Go backend routes in the spec.</p>
         <Formik
           initialValues={initialValues}
-          validate={(values) => {
-            const errors: Partial<RegisterInput> = {};
-            const email = values.email.trim();
-            if (!values.name.trim()) errors.name = "Name is required";
-            if (!email) errors.email = "Email is required";
-            else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = "Enter a valid email address";
-            if (!values.password) errors.password = "Password is required";
-            else if (!isPasswordValid(values.password)) errors.password = "Password does not meet the rules below";
-            if (!values.gender) errors.gender = "Gender is required" as any;
-            return errors;
-          }}
+          validate={validateRegister}
           onSubmit={(values, helpers) => {
             register.mutate(
               { ...values, name: values.name.trim(), email: values.email.trim().toLowerCase() },
@@ -78,58 +98,80 @@ export default function RegisterPage() {
             );
           }}
         >
-          {({ errors, touched, isSubmitting, values, setFieldValue }) => (
-            <Form noValidate className="space-y-5">
-              <Field name="name">{({ field }: { field: FieldInputProps<string> }) => <TextField<RegisterInput> field={field} errors={errors} touched={touched} label="Name" autoComplete="name" placeholder="Alex" />}</Field>
-              <Field name="email">{({ field }: { field: FieldInputProps<string> }) => <TextField<RegisterInput> field={field} errors={errors} touched={touched} label="Email" inputMode="email" autoComplete="email" placeholder="you@example.com" />}</Field>
-              <Field name="password">{({ field }: { field: FieldInputProps<string> }) => <TextField<RegisterInput> field={field} errors={errors} touched={touched} label="Password" type="password" autoComplete="new-password" />}</Field>
-              <PasswordRules password={values.password} />
-              
-              <div className="block space-y-2">
-                <span className="text-sm font-bold text-slate-200">Gender</span>
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setFieldValue("gender", "male")}
-                    className={`flex items-center justify-center gap-2 rounded-2xl border py-3 transition-all duration-350 cursor-pointer ${
-                      values.gender === "male"
-                        ? "border-lime-300 bg-lime-300/10 text-lime-200 shadow-[0_0_15px_rgba(190,242,100,0.12)]"
-                        : "border-white/10 bg-slate-950/40 text-slate-500 hover:border-white/20 hover:text-slate-350"
-                    }`}
-                  >
-                    <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <circle cx="10" cy="14" r="4" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5L20 4m0 0h-5m5 0v5" />
-                    </svg>
-                    <span className="text-xs font-black uppercase tracking-wider">Male</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setFieldValue("gender", "female")}
-                    className={`flex items-center justify-center gap-2 rounded-2xl border py-3 transition-all duration-350 cursor-pointer ${
-                      values.gender === "female"
-                        ? "border-lime-300 bg-lime-300/10 text-lime-200 shadow-[0_0_15px_rgba(190,242,100,0.12)]"
-                        : "border-white/10 bg-slate-950/40 text-slate-500 hover:border-white/20 hover:text-slate-350"
-                    }`}
-                  >
-                    <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <circle cx="12" cy="9" r="4" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 13v7m-3-3h6" />
-                    </svg>
-                    <span className="text-xs font-black uppercase tracking-wider">Female</span>
-                  </button>
-                </div>
-                {touched.gender && errors.gender && (
-                  <span className="block text-sm font-semibold text-red-300">{errors.gender}</span>
-                )}
-              </div>
+          {({ errors, touched, isSubmitting, values, setFieldValue }) => {
+            // Memoize onChange function for GenderSelector to prevent re-creation
+            const handleGenderChange = useCallback((val: "male" | "female") => {
+              setFieldValue("gender", val);
+            }, [setFieldValue]);
 
-              {register.isError ? <p className="rounded-2xl bg-red-400/10 p-3 text-sm font-semibold text-red-200">{register.error?.message || "We could not create your account with those details. Please try again."}</p> : null}
-              <button type="submit" disabled={isSubmitting || register.isPending} className="w-full rounded-2xl bg-lime-300 px-5 py-3 font-black text-slate-950 disabled:opacity-60">
-                {register.isPending ? "Creating..." : "Create account"}
-              </button>
-            </Form>
-          )}
+            return (
+              <Form noValidate className="space-y-5">
+                <Field name="name">
+                  {({ field }: { field: FieldInputProps<string> }) => (
+                    <TextField<RegisterInput>
+                      field={field}
+                      errors={errors}
+                      touched={touched}
+                      label="Name"
+                      autoComplete="name"
+                      placeholder="Alex"
+                    />
+                  )}
+                </Field>
+                
+                <Field name="email">
+                  {({ field }: { field: FieldInputProps<string> }) => (
+                    <TextField<RegisterInput>
+                      field={field}
+                      errors={errors}
+                      touched={touched}
+                      label="Email"
+                      inputMode="email"
+                      autoComplete="email"
+                      placeholder="you@example.com"
+                    />
+                  )}
+                </Field>
+                
+                <Field name="password">
+                  {({ field }: { field: FieldInputProps<string> }) => (
+                    <TextField<RegisterInput>
+                      field={field}
+                      errors={errors}
+                      touched={touched}
+                      label="Password"
+                      type="password"
+                      autoComplete="new-password"
+                    />
+                  )}
+                </Field>
+
+                <PasswordRules password={values.password} />
+                
+                <div className="block space-y-2">
+                  <span className="text-sm font-bold text-slate-200">Gender</span>
+                  <GenderSelector value={values.gender} onChange={handleGenderChange} />
+                  {touched.gender && errors.gender && (
+                    <span className="block text-sm font-semibold text-red-300">{errors.gender}</span>
+                  )}
+                </div>
+
+                {register.isError && (
+                  <p className="rounded-2xl bg-red-400/10 p-3 text-sm font-semibold text-red-200">
+                    {register.error?.message || "We could not create your account with those details. Please try again."}
+                  </p>
+                )}
+                
+                <Button
+                  type="submit"
+                  isLoading={isSubmitting || register.isPending}
+                  className="w-full py-3"
+                >
+                  Create account
+                </Button>
+              </Form>
+            );
+          }}
         </Formik>
         <p className="mt-6 text-center text-sm text-slate-300">
           Already have an account? <Link className="font-bold text-lime-200" href="/auth/login">Login</Link>

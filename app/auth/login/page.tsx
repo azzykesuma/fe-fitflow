@@ -6,9 +6,11 @@ import { useRouter } from "next/navigation";
 import { Field, Form, Formik, type FieldInputProps } from "formik";
 import { toast } from "sonner";
 import { TextField } from "@/components/ui/field";
+import { Button } from "@/components/ui/button";
 
 import { useLogin } from "@/features/auth/hooks";
 import type { LoginInput } from "@/features/auth/types";
+import { validateLogin } from "@/features/auth/validation";
 import { setAuthTokens } from "@/lib/auth-token";
 import { getPasswordPublicKeyFingerprint } from "@/lib/password-encryption";
 
@@ -43,14 +45,7 @@ export default function LoginPage() {
         <p className="mb-8 text-slate-300">Log in to sync meals, workouts, and progress with the API.</p>
         <Formik
           initialValues={initialValues}
-          validate={(values) => {
-            const errors: Partial<LoginInput> = {};
-            const email = values.email.trim();
-            if (!email) errors.email = "Email is required";
-            else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = "Enter a valid email address";
-            if (!values.password) errors.password = "Password is required";
-            return errors;
-          }}
+          validate={validateLogin}
           onSubmit={(values, helpers) => {
             login.mutate(
               { ...values, email: values.email.trim().toLowerCase() },
@@ -78,9 +73,9 @@ export default function LoginPage() {
                   {login.error?.message || "Login failed. Check your details and try again."}
                 </p>
               ) : null}
-              <button type="submit" disabled={isSubmitting || login.isPending} className="w-full rounded-2xl bg-lime-300 px-5 py-3 font-black text-slate-950 disabled:opacity-60">
-                {login.isPending ? "Logging in..." : "Login"}
-              </button>
+              <Button type="submit" isLoading={isSubmitting || login.isPending} className="w-full py-3">
+                Login
+              </Button>
             </Form>
           )}
         </Formik>

@@ -7,6 +7,7 @@ import { AppShell } from "@/components/layout/app-shell";
 import { useMealCalories } from "@/features/meals/hooks";
 import { useBodyMeasurements, useWorkoutProgress } from "@/features/progress/hooks";
 import type { BodyMeasurement } from "@/features/progress/types";
+import { Button } from "@/components/ui/button";
 
 function formatNumber(value: number | undefined, suffix = "") {
   return typeof value === "number" ? `${value.toFixed(1)}${suffix}` : "--";
@@ -30,7 +31,14 @@ function formatDateLabel(dateStr: string) {
 
 function EmptyChartState({ isLoading, points }: Readonly<{ isLoading: boolean; points: ChartPoint[] }>) {
   if (isLoading) {
-    return <div className="grid h-full place-items-center text-center text-xs font-bold text-slate-500">Loading...</div>;
+    return (
+      <div className="grid h-full place-items-center">
+        <div className="flex flex-col items-center justify-center space-y-2.5">
+          <div className="size-6 animate-spin rounded-full border-2 border-lime-350 border-t-transparent shadow-[0_0_12px_rgba(163,230,53,0.15)]" />
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Loading charts...</span>
+        </div>
+      </div>
+    );
   }
 
   if (!points.length) {
@@ -182,8 +190,8 @@ export default function ProgressPage() {
       {/* Date Range Selector Header */}
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-[1.35rem] border border-lime-200/10 bg-[#0b1710] px-4 py-3">
         <span className="text-xs font-black uppercase tracking-wider text-slate-400">Analysis Timeline</span>
-        <div className="flex rounded-lg bg-slate-950/60 p-1 text-[0.68rem] font-bold text-slate-400">
-          <button
+        <div className="flex rounded-lg gap-2 bg-slate-950/60 p-1 text-[0.68rem] font-bold text-slate-400">
+          <Button
             type="button"
             onClick={() => setRangeMode("7d")}
             className={`rounded-md px-3 py-1 transition cursor-pointer ${
@@ -191,8 +199,8 @@ export default function ProgressPage() {
             }`}
           >
             7 Days
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={() => setRangeMode("30d")}
             className={`rounded-md px-3 py-1 transition cursor-pointer ${
@@ -200,8 +208,8 @@ export default function ProgressPage() {
             }`}
           >
             30 Days
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={() => setRangeMode("90d")}
             className={`rounded-md px-3 py-1 transition cursor-pointer ${
@@ -209,7 +217,7 @@ export default function ProgressPage() {
             }`}
           >
             90 Days
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -246,7 +254,7 @@ export default function ProgressPage() {
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="text-base font-black">Body weight</h2>
             <div className="flex rounded-lg bg-slate-950/60 p-1 text-[0.68rem] font-bold text-slate-400">
-              <button
+              <Button
                 type="button"
                 onClick={() => setWeightViewMode("last7")}
                 className={`rounded-md px-2.5 py-1 transition cursor-pointer ${
@@ -254,7 +262,7 @@ export default function ProgressPage() {
                 }`}
               >
                 Last 7
-              </button>
+              </Button>
               <button
                 type="button"
                 onClick={() => setWeightViewMode("all")}
@@ -295,7 +303,7 @@ export default function ProgressPage() {
         <section className="rounded-[1.35rem] border border-lime-200/10 bg-[#101b15] p-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-1.5 rounded-lg bg-slate-950/60 p-1 text-[0.68rem] font-bold text-slate-400">
-              <button
+              <Button
                 type="button"
                 onClick={() => setBiometricTab("waist")}
                 className={`rounded-md px-2.5 py-1.5 transition cursor-pointer ${
@@ -303,8 +311,8 @@ export default function ProgressPage() {
                 }`}
               >
                 Waist
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={() => setBiometricTab("bmi")}
                 className={`rounded-md px-2.5 py-1.5 transition cursor-pointer ${
@@ -312,11 +320,11 @@ export default function ProgressPage() {
                 }`}
               >
                 BMI
-              </button>
+              </Button>
             </div>
             
             <div className="flex rounded-lg bg-slate-950/60 p-1 text-[0.68rem] font-bold text-slate-400">
-              <button
+              <Button
                 type="button"
                 onClick={() => setBiometricViewMode("last7")}
                 className={`rounded-md px-2.5 py-1 transition cursor-pointer ${
@@ -324,8 +332,8 @@ export default function ProgressPage() {
                 }`}
               >
                 Last 7
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={() => setBiometricViewMode("all")}
                 className={`rounded-md px-2.5 py-1 transition cursor-pointer ${
@@ -333,8 +341,8 @@ export default function ProgressPage() {
                 }`}
               >
                 All Logs
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={() => setBiometricViewMode("weekly")}
                 className={`rounded-md px-2.5 py-1 transition cursor-pointer ${
@@ -342,7 +350,7 @@ export default function ProgressPage() {
                 }`}
               >
                 Weekly Avg
-              </button>
+              </Button>
             </div>
           </div>
           

@@ -6,6 +6,7 @@ import { AppShell } from "@/components/layout/app-shell";
 import { TextField } from "@/components/ui/field";
 import { useCreateWorkoutPlan } from "@/features/workouts/hooks";
 import type { CreateWorkoutPlanInput } from "@/features/workouts/types";
+import { Button } from "@/components/ui/button";
 
 const initialValues: CreateWorkoutPlanInput = { name: "", description: "", scheduled_day: "Monday" };
 
@@ -43,9 +44,9 @@ export default function NewWorkoutPage() {
                 </Field>
               </label>
               {createWorkoutPlan.isError ? <p className="rounded-2xl bg-red-400/10 p-3 text-sm font-semibold text-red-200">Could not create workout. Start the backend API and try again.</p> : null}
-              <button disabled={isSubmitting || createWorkoutPlan.isPending} className="rounded-2xl bg-lime-300 px-5 py-3 font-black text-slate-950 disabled:opacity-60" type="submit">
+              <Button disabled={isSubmitting || createWorkoutPlan.isPending} className="rounded-2xl bg-lime-300 px-5 py-3 font-black text-slate-950 disabled:opacity-60" type="submit">
                 {createWorkoutPlan.isPending ? "Saving..." : "Save workout"}
-              </button>
+              </Button>
             </Form>
           )}
         </Formik>

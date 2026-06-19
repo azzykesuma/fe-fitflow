@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { AppShell } from "@/components/layout/app-shell";
 import { useDeleteMealLog, useMealLog } from "@/features/meals/hooks";
+import { Button } from "@/components/ui/button";
 
 export default function MealDetailPage({ params }: Readonly<{ params: Promise<{ id: string }> }>) {
   const router = useRouter();
@@ -53,14 +54,14 @@ export default function MealDetailPage({ params }: Readonly<{ params: Promise<{ 
           {meal.data.notes ? <p className="mt-4 rounded-2xl bg-[#101b15] p-3 text-sm font-bold text-slate-300">{meal.data.notes}</p> : null}
           <div className="mt-4 grid grid-cols-2 gap-3">
             <Link href={`/meals/${unwrappedParams.id}/edit`} className="rounded-2xl bg-lime-300 px-5 py-3 text-center font-black text-slate-950">Edit</Link>
-            <button
+            <Button
               type="button"
               disabled={isDeleting || deleteMeal.isPending}
               onClick={onDelete}
               className="rounded-2xl border border-red-300/30 px-5 py-3 font-black text-red-100 disabled:opacity-60"
             >
               {isDeleting || deleteMeal.isPending ? "Deleting..." : "Delete"}
-            </button>
+            </Button>
           </div>
         </section>
       ) : null}

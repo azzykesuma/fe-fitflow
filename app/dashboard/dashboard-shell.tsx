@@ -10,7 +10,7 @@ export function DashboardShell({ children }: Readonly<{ children: React.ReactNod
   const name = firstName ? `${firstName.charAt(0).toUpperCase()}${firstName.slice(1)}` : "Athlete";
 
   return (
-    <AppShell title={`Morning, ${name}`} eyebrow="Today's command center">
+    <AppShell title={`Morning, ${name}`} eyebrow="Welcome back to FitFlow">
       {children}
     </AppShell>
   );

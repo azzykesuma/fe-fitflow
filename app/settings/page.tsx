@@ -5,6 +5,7 @@ import { useCurrentUser, useUserProfile, useUpdateUserProfile } from "@/features
 import { Field, Form, Formik } from "formik";
 import { toast } from "sonner";
 import { motion } from "motion/react";
+import { Button } from "@/components/ui/button";
 
 type ProfileFormValues = {
   name: string;
@@ -203,7 +204,7 @@ export default function SettingsPage() {
                 <div className="block space-y-2">
                   <span className="text-sm font-bold text-slate-200">Gender</span>
                   <div className="grid grid-cols-2 gap-4">
-                    <button
+                    <Button
                       type="button"
                       onClick={() => setFieldValue("gender", "male")}
                       className={`relative flex flex-col items-center justify-center gap-2 rounded-2xl border py-4 transition-all duration-300 cursor-pointer ${
@@ -220,9 +221,9 @@ export default function SettingsPage() {
                       {values.gender === "male" && (
                         <span className="absolute right-2 top-2 size-2 rounded-full bg-lime-300" />
                       )}
-                    </button>
+                    </Button>
 
-                    <button
+                    <Button
                       type="button"
                       onClick={() => setFieldValue("gender", "female")}
                       className={`relative flex flex-col items-center justify-center gap-2 rounded-2xl border py-4 transition-all duration-300 cursor-pointer ${
@@ -239,30 +240,23 @@ export default function SettingsPage() {
                       {values.gender === "female" && (
                         <span className="absolute right-2 top-2 size-2 rounded-full bg-lime-300" />
                       )}
-                    </button>
+                    </Button>
                   </div>
                   {touched.gender && errors.gender && (
                     <span className="block text-sm font-semibold text-red-300">{errors.gender}</span>
                   )}
                 </div>
 
-                <button
+                <Button
                   type="submit"
                   disabled={isSubmitting || updateUserProfile.isPending}
                   className="w-full mt-2 rounded-2xl bg-lime-300 px-5 py-4 font-black text-slate-950 hover:bg-lime-200 active:scale-[0.98] transition duration-200 disabled:opacity-60 disabled:pointer-events-none cursor-pointer"
                 >
                   {updateUserProfile.isPending ? "Saving changes..." : "Save Profile Settings"}
-                </button>
+                </Button>
               </Form>
             )}
           </Formik>
-        </section>
-
-        {/* API Connection Panel */}
-        <section className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-6">
-          <h3 className="text-lg font-black text-white">API Connection</h3>
-          <p className="mt-2 text-xs font-bold text-slate-400">Set `NEXT_PUBLIC_API_BASE_URL` to point this frontend at the Go backend repository.</p>
-          <code className="mt-4 block rounded-2xl bg-slate-950/80 p-4 text-xs font-mono text-lime-100/90 border border-white/5">NEXT_PUBLIC_API_BASE_URL=http://localhost:8080</code>
         </section>
       </div>
     </AppShell>

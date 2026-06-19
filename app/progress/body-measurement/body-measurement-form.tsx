@@ -4,6 +4,7 @@ import { Field, Form, Formik } from "formik";
 import { toast } from "sonner";
 import { useCreateBodyMeasurement } from "@/features/progress/hooks";
 import type { CreateBodyMeasurementInput } from "@/features/progress/types";
+import { Button } from "@/components/ui/button";
 
 type NumericFieldName = Exclude<keyof BodyMeasurementFormValues, "log_date" | "notes">;
 
@@ -163,9 +164,9 @@ export function BodyMeasurementForm() {
               <span className="block h-5 text-sm font-semibold text-red-300">{touched.notes && errors.notes ? errors.notes : ""}</span>
             </label>
 
-            <button type="submit" disabled={isSubmitting || createBodyMeasurement.isPending} className="w-full rounded-2xl bg-lime-300 px-5 py-3 font-black text-slate-950 disabled:opacity-60">
+            <Button type="submit" disabled={isSubmitting || createBodyMeasurement.isPending} className="w-full rounded-2xl bg-lime-300 px-5 py-3 font-black text-slate-950 disabled:opacity-60">
               {createBodyMeasurement.isPending ? "Saving..." : "Save measurement"}
-            </button>
+            </Button>
           </Form>
         )}
       </Formik>

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useCreateMealLog, useUpdateMealLog } from "@/features/meals/hooks";
 import type { MealLog, MealLogInput, MealType } from "@/features/meals/types";
+import { Button } from "@/components/ui/button";
 
 type MealFormValues = {
   meal_date: string;
@@ -134,9 +135,9 @@ export function MealLogForm({ meal }: Readonly<{ meal?: MealLog }>) {
             <Field as="textarea" name="notes" rows={3} className="w-full resize-none rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-lime-300/70" placeholder="Pre-workout meal" />
           </label>
 
-          <button type="submit" disabled={isSubmitting || mutation.isPending} className="w-full rounded-2xl bg-lime-300 px-5 py-3 font-black text-slate-950 disabled:opacity-60">
+          <Button type="submit" disabled={isSubmitting || mutation.isPending} className="w-full rounded-2xl bg-lime-300 px-5 py-3 font-black text-slate-950 disabled:opacity-60">
             {mutation.isPending ? "Saving..." : meal ? "Update meal" : "Create meal"}
-          </button>
+          </Button>
         </Form>
       )}
     </Formik>
