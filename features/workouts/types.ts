@@ -39,6 +39,7 @@ export type WorkoutSession = {
   finished_at?: string;
   status: "in_progress" | "finished" | string;
   notes?: string;
+  sets?: (WorkoutSetLog & { exercise_name?: string; created_at?: string })[];
 };
 
 export type WorkoutSetLog = {

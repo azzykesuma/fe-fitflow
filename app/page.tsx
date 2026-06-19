@@ -35,8 +35,8 @@ export default function HomePage() {
           <HomeHeroActions />
         </MotionSection>
 
-        <MotionSection delay={0.12} className="rounded-[2rem] border border-white/10 bg-white/[0.07] p-5 shadow-2xl backdrop-blur">
-          <div className="rounded-[1.5rem] bg-slate-950/80 p-5">
+        <MotionSection delay={0.12} className="rounded-4xl border border-white/10 bg-white/[0.07] p-5 shadow-2xl backdrop-blur">
+          <div className="rounded-3xl bg-slate-950/80 p-5">
             <div className="mb-5 flex items-center justify-between">
               <div>
                 <p className="text-sm text-slate-400">Today</p>
@@ -46,7 +46,7 @@ export default function HomePage() {
             </div>
             <div className="space-y-3">
               {highlights.map((item, index) => (
-                <div key={item} className="flex items-center justify-between rounded-2xl bg-white/[0.06] p-4">
+                <div key={item} className="flex items-center justify-between rounded-2xl bg-white/6 p-4">
                   <span className="font-bold">{item}</span>
                   <span className="grid size-8 place-items-center rounded-full bg-lime-300/15 text-sm font-black text-lime-200">{index + 1}</span>
                 </div>
