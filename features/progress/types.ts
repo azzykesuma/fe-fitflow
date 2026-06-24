@@ -54,6 +54,7 @@ export type BodyMeasurement = {
   left_calf_cm: number;
   right_calf_cm: number;
   notes: string;
+  image_url?: string;
   bmi?: number;
   body_fat_percent?: number;
   body_fat_percentage?: number;
@@ -78,9 +79,17 @@ export type CreateBodyMeasurementInput = {
   right_calf_cm: number;
   notes: string;
   log_date: string;
+  image_url?: string;
 };
 
 export type DateRangeQuery = {
   from: string;
   to: string;
+};
+
+export type ProgressPhotoPoint = {
+  date: string;
+  image_url: string;
+  weight_kg?: number;
+  body_fat_percentage?: number;
 };

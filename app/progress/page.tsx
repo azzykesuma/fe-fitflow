@@ -230,9 +230,14 @@ export default function ProgressPage() {
         <div className="mt-5 h-36 rounded-2xl bg-lime-300/10 p-3">
           <BodyFatAreaChart points={bodyMeasurementsToBars(bodyMeasurements.data)} isLoading={bodyMeasurements.isLoading} />
         </div>
-        <Link href="/progress/body-measurement" className="mt-4 inline-flex rounded-xl bg-lime-300 px-4 py-3 text-xs font-black text-slate-900 transition hover:bg-lime-400">
-          Body measurements
-        </Link>
+        <div className="mt-4 flex flex-wrap gap-2.5">
+          <Link href="/progress/body-measurement" className="inline-flex rounded-xl bg-lime-300 px-4 py-3 text-xs font-black text-slate-900 transition hover:bg-lime-400">
+            Body measurements
+          </Link>
+          <Link href="/progress/photos" className="inline-flex rounded-xl border border-lime-300/30 bg-lime-300/10 px-4 py-3 text-xs font-black text-lime-300 transition hover:bg-lime-300/20">
+            Progress photos
+          </Link>
+        </div>
       </div>
 
       <div className="mb-4 grid gap-3 sm:grid-cols-3">

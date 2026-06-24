@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createBodyMeasurement, createBodyWeight, getBodyMeasurements, getBodyWeightLogs, getDashboardSummary, getWorkoutProgress } from "./api";
+import { createBodyMeasurement, createBodyWeight, getBodyMeasurements, getBodyWeightLogs, getDashboardSummary, getWorkoutProgress, getProgressPhotos } from "./api";
 import type { DateRangeQuery } from "./types";
 
 export function useDashboardSummary() {
@@ -38,7 +38,12 @@ export function useCreateBodyMeasurement() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["progress", "body-measurements"] });
       queryClient.invalidateQueries({ queryKey: ["progress", "body-weight"] });
+      queryClient.invalidateQueries({ queryKey: ["progress", "photos"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     },
   });
+}
+
+export function useProgressPhotos() {
+  return useQuery({ queryKey: ["progress", "photos"], queryFn: getProgressPhotos });
 }
